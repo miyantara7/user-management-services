@@ -23,6 +23,7 @@ func RunServer() {
 	config := cfg.GetConfig()
 	grpcServer := grpc.NewServer()
 
+	Apply(grpcServer)
 	reflection.Register(grpcServer)
 
 	svcHost := config.Server.Grpc.Host

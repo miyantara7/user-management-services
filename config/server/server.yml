@@ -1,5 +1,5 @@
 server:
     grpc:
       tls: false
-      host:
+      host: localhost
       port: 9902

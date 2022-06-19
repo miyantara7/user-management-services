@@ -1,5 +1,5 @@
 package user_management
 
 type UserManagement interface {
-	Login()
+	Login(interface{}) (interface{}, error)
 }

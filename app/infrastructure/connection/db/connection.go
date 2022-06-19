@@ -13,6 +13,7 @@ import (
 
 var tables = []interface{}{
 	&entity.User{},
+	&entity.LoginHistory{},
 }
 
 var (
@@ -31,7 +32,7 @@ func init() {
 
 func Conn(cfg db.Database) (*gorm.DB, error) {
 	pg := fmt.Sprintf("host= %v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Asia/Jakarta", cfg.Host, cfg.Username, cfg.Password, cfg.Dbname, cfg.Port)
-	db, err := gorm.Open(postgres.Open(pg), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(pg))
 	MigrateSchema(db)
 	return db, err
 }
