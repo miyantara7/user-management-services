@@ -1,7 +1,6 @@
 package grpc
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -9,8 +8,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	rkboot "github.com/rookie-ninja/rk-boot"
-	rkgrpc "github.com/rookie-ninja/rk-grpc/boot"
 	proto "github.com/vins7/module-protos/app/interface/grpc/proto/user_management"
 	dbUser "github.com/vins7/user-management-services/app/adapter/db/user_management"
 	"github.com/vins7/user-management-services/app/infrastructure/connection/db"
@@ -23,29 +20,10 @@ import (
 
 func RunServer() {
 
-	boot := rkboot.NewBoot()
-
 	config := cfg.GetConfig()
 	grpcServer := grpc.NewServer()
 
 	reflection.Register(grpcServer)
-
-	// ***************************************
-	// ******* Register GRPC & Gateway *******
-	// ***************************************
-
-	// Get grpc entry with name
-	grpcEntry := boot.GetEntry("greeter").(*rkgrpc.GrpcEntry)
-	// Register grpc registration function
-	grpcEntry.AddRegFuncGrpc(Apply)
-	// Register grpc-gateway registration function
-	// grpcEntry.AddRegFuncGw(greeter.RegisterGreeterHandlerFromEndpoint)
-
-	// Bootstrap
-	boot.Bootstrap(context.Background())
-
-	// Wait for shutdown sig
-	boot.WaitForShutdownSig(context.Background())
 
 	svcHost := config.Server.Grpc.Host
 	svcPort := config.Server.Grpc.Port
@@ -71,5 +49,5 @@ func RunServer() {
 }
 
 func Apply(server *grpc.Server) {
-	proto.RegisterTransactionNotpoolServiceServer(server, svcUser.NewUserManagementService(ucUser.NewUserManagementUsecase(dbUser.NewUserManagementDB(db.UserDB))))
+	proto.RegisterUsermanagementServiceServer(server, svcUser.NewUserManagementService(ucUser.NewUserManagementUsecase(dbUser.NewUserManagementDB(db.UserDB))))
 }

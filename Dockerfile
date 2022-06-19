@@ -17,6 +17,6 @@ RUN go mod tidy
 
 RUN cd ./server/grpc && go build
 
-EXPOSE 9901
+EXPOSE 9902
 
 ENTRYPOINT ["./main"]

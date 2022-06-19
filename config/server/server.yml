@@ -2,4 +2,4 @@ server:
     grpc:
       tls: false
       host:
-      port: 9901
+      port: 9902
