@@ -2,9 +2,11 @@ package user_management
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/vins7/user-management-services/app/adapter/entity"
+	"github.com/vins7/user-management-services/app/interface/model"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -30,34 +32,55 @@ func (u *UserManagementDB) Login(in interface{}) (*entity.User, error) {
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
-	if err := u.db.Debug().Where("username = ? and password = ?", req.Username, req.Password).First(&data).Error; err != nil {
+	if err := u.db.Debug().Where("username = ?", req.Username).Joins("DataUser").First(&data).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Errorf(codes.NotFound, "username atau password tidak ditemukan !")
 		}
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
+	fmt.Println("DATA : ", data)
 	return &data, nil
 }
 
 func (u *UserManagementDB) CreateUser(in interface{}) error {
-	var (
-		req  *entity.User
-		data entity.User
-	)
+
+	var req *entity.User
 
 	if err := mapstructure.Decode(in, &req); err != nil {
-		return err
+		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err := u.db.Debug().Where("username = ? and password = ?").Find(&data).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return status.Errorf(codes.NotFound, "username atau password tidak ditemukan !")
-		}
-		return err
+	data := &entity.User{}
+	if err := u.db.Debug().Where("username = ?", req.Username).Find(&data).Error; err != nil {
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	if data.Id != "" {
+		return status.Errorf(codes.FailedPrecondition, "username already exist !")
+	}
+
+	if err := u.db.Debug().Create(req).Error; err != nil {
+		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	return nil
+}
+
+func (u *UserManagementDB) DetailUser(req *model.DetailUserReq) (*entity.User, error) {
+
+	data := &entity.User{}
+	if err := u.db.Debug().
+		Joins("DataUser").
+		Where("username = ? and DataUser.user_id = ?", req.Username, req.UserId).
+		Find(&data).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, status.Errorf(codes.NotFound, "username atau password tidak ditemukan !")
+		}
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return data, nil
 }
 
 func (u *UserManagementDB) InsertLoginHistory(in interface{}) error {
@@ -66,7 +89,7 @@ func (u *UserManagementDB) InsertLoginHistory(in interface{}) error {
 	)
 
 	if err := mapstructure.Decode(in, &req); err != nil {
-		return err
+		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	if err := u.db.Debug().Create(req).Error; err != nil {

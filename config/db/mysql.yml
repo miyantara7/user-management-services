@@ -1,0 +1,7 @@
+database:
+  userManagement:
+    host: localhost
+    port: 5306
+    username: root
+    password: root
+    dbname: user_services

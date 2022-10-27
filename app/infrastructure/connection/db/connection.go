@@ -7,11 +7,12 @@ import (
 	"github.com/vins7/user-management-services/app/adapter/entity"
 	"github.com/vins7/user-management-services/config"
 	"github.com/vins7/user-management-services/config/db"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var tables = []interface{}{
+	&entity.DataUser{},
 	&entity.User{},
 	&entity.LoginHistory{},
 }
@@ -31,8 +32,8 @@ func init() {
 }
 
 func Conn(cfg db.Database) (*gorm.DB, error) {
-	pg := fmt.Sprintf("host= %v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Asia/Jakarta", cfg.Host, cfg.Username, cfg.Password, cfg.Dbname, cfg.Port)
-	db, err := gorm.Open(postgres.Open(pg))
+	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Dbname)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	MigrateSchema(db)
 	return db, err
 }

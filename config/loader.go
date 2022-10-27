@@ -38,7 +38,7 @@ func init() {
 
 	viper.AddConfigPath(basepath + "/db")
 	viper.SetConfigType("yaml")
-	viper.SetConfigName("postgresql.yml")
+	viper.SetConfigName("mysql.yml")
 	err = viper.MergeInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Cannot read database config: %v", err))
