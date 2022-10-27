@@ -1,22 +1,15 @@
-FROM golang:latest
-
-#RUN apk update && apk add --no-cache git
+FROM golang:1.16-alpine
 
 WORKDIR /app
 
-COPY go.mod .
-COPY go.sum .
-
+COPY go.mod ./
+COPY go.sum ./
 RUN go mod download
 
-COPY . .
+COPY *.go ./
 
-RUN go mod tidy
-
-#RUN make build
-
-RUN cd ./server/grpc && go build
+RUN go build -o /docker-gs-ping
 
 EXPOSE 9902
 
-ENTRYPOINT ["./main"]
+CMD [ "/docker-gs-ping" ]

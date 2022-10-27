@@ -2,7 +2,6 @@ package user_management
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/vins7/user-management-services/app/adapter/entity"
@@ -34,12 +33,11 @@ func (u *UserManagementDB) Login(in interface{}) (*entity.User, error) {
 
 	if err := u.db.Debug().Where("username = ?", req.Username).Joins("DataUser").First(&data).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Errorf(codes.NotFound, "username atau password tidak ditemukan !")
+			return nil, status.Errorf(codes.NotFound, "username atau password anda salah !")
 		}
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
-	fmt.Println("DATA : ", data)
 	return &data, nil
 }
 
@@ -52,7 +50,7 @@ func (u *UserManagementDB) CreateUser(in interface{}) error {
 	}
 
 	data := &entity.User{}
-	if err := u.db.Debug().Where("username = ?", req.Username).Find(&data).Error; err != nil {
+	if err := u.db.Debug().Where("username = ?", req.Username).First(&data).Error; err != nil {
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -73,9 +71,9 @@ func (u *UserManagementDB) DetailUser(req *model.DetailUserReq) (*entity.User, e
 	if err := u.db.Debug().
 		Joins("DataUser").
 		Where("username = ? and DataUser.user_id = ?", req.Username, req.UserId).
-		Find(&data).Error; err != nil {
+		First(&data).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Errorf(codes.NotFound, "username atau password tidak ditemukan !")
+			return nil, status.Errorf(codes.NotFound, "user tidak ditemukan !")
 		}
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
