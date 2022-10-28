@@ -36,7 +36,7 @@ func (u *UserManagementUsecase) Login(in interface{}) (interface{}, error) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(req.Password)); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "username atau password salah !")
 	}
 
 	if err := u.repo.InsertLoginHistory(&entity.LoginHistory{
