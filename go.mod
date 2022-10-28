@@ -1,11 +1,9 @@
 module github.com/vins7/user-management-services
 
-replace github.com/vins7/module-protos => ./../module-protos
-
 require (
 	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/vins7/module-protos v1.0.5
+	github.com/vins7/module-protos v1.0.7
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	google.golang.org/grpc v1.47.0
 	gorm.io/driver/mysql v1.4.3
