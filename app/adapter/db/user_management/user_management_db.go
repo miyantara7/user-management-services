@@ -51,15 +51,17 @@ func (u *UserManagementDB) CreateUser(in interface{}) error {
 
 	data := &entity.User{}
 	if err := u.db.Debug().Where("username = ?", req.Username).First(&data).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err := u.db.Debug().Create(req).Error; err != nil {
+				return status.Errorf(codes.Internal, err.Error())
+			}
+			return nil
+		}
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	if data.Id != "" {
 		return status.Errorf(codes.FailedPrecondition, "username already exist !")
-	}
-
-	if err := u.db.Debug().Create(req).Error; err != nil {
-		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	return nil
