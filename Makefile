@@ -15,7 +15,7 @@ setup:
 	@cp config/example/server.yml.example config/server/server.yml
 
 build-docker: build
-	@docker build --tag bussiness-logic-services .
+	@docker build --tag user-management-services .
 
 protoc-docker: build
-	@docker container create --name bl-services -p 9901:9901 bussiness-logic-services
+	@docker container create --name user-services -p 9902:9902/tcp user-management-services
