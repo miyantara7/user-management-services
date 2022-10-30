@@ -1,5 +1,5 @@
 server:
   grpc:
     tls: false
-    host: localhost
+    host: user-management-services
     port: 9902
