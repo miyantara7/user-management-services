@@ -18,4 +18,4 @@ build-docker: build
 	@docker build --tag user-management-services .
 
 protoc-docker:
-	@docker container create --name user-services -p 9902:9902/tcp user-management-services
+	@docker container create --name user-management-services -p 9902:9902/tcp user-management-services
