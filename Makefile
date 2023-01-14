@@ -10,7 +10,7 @@ tidy:
 	@go mod tidy
 
 setup:
-	@echo " --- Setup and generate configuration --- "
+	@echo " --- Setup and generate configuration ---  "
 	@cp config/example/mysql.yml.example config/db/mysql.yml
 	@cp config/example/server.yml.example config/server/server.yml
 
