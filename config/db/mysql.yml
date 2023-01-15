@@ -1,7 +1,7 @@
 database:
   userManagement:
-    host: mysql-service
+    host: localhost
     port: 3306
     username: root
-    password: root
-    dbname: user_services
+    password: 12345678
+    dbname: mysql
